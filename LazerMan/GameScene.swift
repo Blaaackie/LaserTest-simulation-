@@ -11,7 +11,7 @@ import GameplayKit
 
 class GameScene: SKScene {
     
-    var Hero = SKSpriteNode(imageNamed: "SoccerBall")
+    var Hero = SKSpriteNode(imageNamed: "Laser")
     var background = SKSpriteNode()
     
     override func didMove(to view: SKView) {
@@ -32,36 +32,33 @@ class GameScene: SKScene {
         borderFrame.friction = 0
         borderFrame.restitution = 1
         self.physicsBody = borderFrame
-        
-        
-//        let border = SKPhysicsBody(edgeLoopFrom: self.frame)
-//        border.friction = 0
-//        border.restitution = 1
-//        self.physicsBody = border
-        
-//        let rightBorder = SKPhysicsBody(edgeFrom: CGPoint(x: self.frame.width / 2, y: self.frame.height / 2), to: CGPoint(x: self.frame.width / 2, y: -(self.frame.height / 2)))
-//        rightBorder.friction = 0
-//        self.physicsBody = rightBorder
-//        
-//        let leftBorder = SKPhysicsBody(edgeFrom: CGPoint(x: -(self.frame.width / 2), y: self.frame.height / 2), to: CGPoint(x: -(self.frame.width / 2), y: -(self.frame.height / 2)))
-//        leftBorder.friction = 0
-//        self.physicsBody = leftBorder
+
+
     }
     
-    
-    
-    
-    
-    
     override func update(_ currentTime: CFTimeInterval) {
+        
         moveBackgrounds()
+        
+        removeExessProjectiles()
+        
+    }
+    
+    func removeExessProjectiles() {
+        
+        for temp in self.children {
+            if temp.name == "SmallBall" && temp.position.y < -600 {
+                temp.removeFromParent()
+                print(temp.position.y)
+            }
+        }
     }
     
     func createBackgrounds() {
         
         for i in 0...3 {
             
-            let background = SKSpriteNode(imageNamed: "MetalBackground")
+            let background = SKSpriteNode(imageNamed: "LaserTunnel")
             background.name = "Background"
             background.size = CGSize(width: (self.scene?.size.width)!, height: 1000)
             background.anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -74,12 +71,14 @@ class GameScene: SKScene {
     
     func moveBackgrounds() {
         
-        self.enumerateChildNodes(withName:"Background") { (node, error) in
+        self.enumerateChildNodes(withName:"Background")
+        {
+            (node, error) in
             
-            node.position.y -= 1
+            node.position.y -= 3
             
-            if node.position.y < -((self.scene?.size.height)!) {
-                
+            if node.position.y < -((self.scene?.size.height)!)
+            {
                 node.position.y += (self.scene?.size.height)! * 3
             }
         }
@@ -96,9 +95,9 @@ class GameScene: SKScene {
             SmallBall.physicsBody = SKPhysicsBody(circleOfRadius: SmallBall.size.width / 2)
             SmallBall.physicsBody?.affectedByGravity = true
             SmallBall.zPosition = 1
+            SmallBall.name = "SmallBall"
             
             self.addChild(SmallBall)
-            
             
         var dx = CGFloat(location.x - Hero.position.x)
         var dy = CGFloat(location.y - Hero.position.y)
@@ -112,8 +111,6 @@ class GameScene: SKScene {
             
             
         SmallBall.physicsBody?.applyImpulse(vector)
-            
-            
             
         }
     }
